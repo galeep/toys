@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazard Deck: The Dangers of Tech Debt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base & Typography --- */
+        :root {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --card-back-bg: linear-gradient(45deg, #0f3460, #1a1a2e);
+            --primary-glow: #e94560;
+            --secondary-glow: #533483;
+            --text-color: #e0e0e0;
+            --header-color: #ffffff;
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at top left, rgba(233, 69, 96, 0.2), transparent 40%),
+                              radial-gradient(circle at bottom right, rgba(83, 52, 131, 0.2), transparent 40%);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* --- Header & Footer --- */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--header-color);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            text-align: center;
+        }
+        
+        .footer a {
+            color: var(--primary-glow);
+            text-decoration: none;
+        }
+
+        /* --- Card Grid --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* --- Card Flip Mechanics --- */
+        .card {
+            background-color: transparent;
+            height: 350px;
+            perspective: 1000px; /* Gives the 3D effect depth */
+            cursor: pointer;
+            border-radius: var(--border-radius);
+        }
+        
+        .card:focus {
+            outline: 2px solid var(--primary-glow);
+            outline-offset: 4px;
+        }
+        .card:focus-visible {
+             outline: 2px solid var(--primary-glow);
+            outline-offset: 4px;
+        }
+
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-radius: var(--border-radius);
+        }
+
+        /* The flip happens here */
+        .card.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        /* --- Card Front Styling --- */
+        .card-front {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover .card-front {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--secondary-glow);
+        }
+
+        .card-front h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--header-color);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- Card Back Styling --- */
+        .card-back {
+            background: var(--card-back-bg);
+            border: 1px solid var(--primary-glow);
+            transform: rotateY(180deg); /* Start flipped away */
+        }
+        
+        .card-back h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--primary-glow);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .card-back p {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>Hazard Deck</h1>
+        <p>Click a card to reveal the hidden costs of Technical Debt.</p>
+    </header>
+
+    <main class="card-grid" id="cardGrid">
+        <!-- Cards will be dynamically inserted here by JavaScript -->
+    </main>
+    
+    <footer class="footer">
+        <p>Built by AI. Inspired by real-world development pain.</p>
+    </footer>
+
+    <script>
+        const hazards = [
+            {
+                word: "VELOCITY",
+                detail: "New features take forever to build because developers are constantly fighting the old, messy code."
+            },
+            {
+                word: "BUGS",
+                detail: "Simple changes cause unexpected bugs in seemingly unrelated parts of the system. Quality suffers."
+            },
+            {
+                word: "MORALE",
+                detail: "Developers become frustrated and demotivated working on a codebase they can't be proud of, leading to burnout."
+            },
+            {
+                word: "ONBOARDING",
+                detail: "New hires struggle to understand the convoluted system, extending the time it takes for them to become productive."
+            },
+            {
+                word: "SECURITY",
+                detail: "Outdated libraries and complex, poorly understood code can hide critical security vulnerabilities."
+            },
+            {
+                word: "SCALE",
+                detail: "The system can't handle increased load or traffic because of fundamental architectural flaws."
+            },
+            {
+                word: "INNOVATION",
+                detail: "The team is so busy with maintenance and workarounds that there's no time or capacity for innovative new ideas."
+            },
+            {
+                word: "RISK",
+                detail: "Deployments become high-stakes events. It's impossible to predict what might break with each new release."
+            }
+        ];
+
+        const cardGrid = document.getElementById('cardGrid');
+
+        // Function to create and append cards to the grid
+        function createHazardCards() {
+            hazards.forEach(hazard => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.tabIndex = 0; // Make it focusable for keyboard users
+
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <h2>${hazard.word}</h2>
+                        </div>
+                        <div class="card-back">
+                            <h3>${hazard.word}</h3>
+                            <p>${hazard.detail}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click listener to flip the card
+                card.addEventListener('click', () => {
+                    card.classList.toggle('is-flipped');
+                });
+                
+                // Add keyboard listener for accessibility
+                card.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        card.classList.toggle('is-flipped');
+                    }
+                });
+
+                cardGrid.appendChild(card);
+            });
+        }
+
+        // Initialize the app
+        createHazardCards();
+    </script>
+
+</body>
+</html>
